@@ -4,6 +4,9 @@ import './App.css'
 import BookList from "./BookList";
 
 class App extends React.Component {
+
+
+
   state = {
     /**
      * TODO: Instead of using this state variable to keep track of which page
@@ -14,11 +17,63 @@ class App extends React.Component {
     showSearchPage: false,
     bookList: [],
     moveOptions: [ "Read", "Currently Reading", "Want to Read"],
-    booksByCategory:  { "Read": ["nggnmAEACAAJ" ], "Currently Reading": ["evuwdDLfAyYC"], "Want to Read": ["jAUODAAAQBAJ"]},
+    booksIdByCategory:  { "Read": [], "Currently Reading": [], "Want to Read": ["nggnmAEACAAJ", "evuwdDLfAyYC", "jAUODAAAQBAJ"] },
+    booksByCategory:  { },
   }
 
   componentDidMount(){
-    BooksAPI.getAll().then((books)=> { return this.setState( {booksList : books }); });
+    BooksAPI.getAll()
+            .then((books)=> 
+                  { 
+                    this.setState( {bookList : books }); 
+                  });
+            
+    this.state.moveOptions.map(
+      (moveOption)=>{
+        const arr = this.state.booksIdByCategory[moveOption];
+        if(arr.length > 0)
+        {
+          const bookObjects = [];
+          arr.map((bookid) => 
+            {
+              console.log('inside books id array');
+              console.log('this value: ', bookid);
+              BooksAPI.get(bookid)
+                      .then( (book )=> {
+                                  console.log('this book: ', book);   
+                                  bookObjects.push(book);
+                                }) 
+            }
+          );      
+          this.setState( (prevState) => {
+            const newBooks = {};
+            newBooks[moveOption] = bookObjects;
+            return {booksByCategory: Object.assign(prevState.booksByCategory, newBooks )};
+          }, () => { 
+            console.log(' checking after setstate is done: ', this.state.booksByCategory);   
+            console.log(' checking after setstate is the whole state: ', this.state);   
+          }
+          )
+        }
+      }
+    );
+    console.log('in componentDidMount menthod 3rd');
+  }
+
+  sendBookList(str){
+    const arr = this.state.booksByCategory[str];
+    if(arr.length > 0){      
+      const bookObjects = [];
+      arr.map( 
+        (bookid) => 
+                BooksAPI.get(bookid)
+                        .then( book => bookObjects.push(book)) 
+      );
+      return bookObjects;
+    }
+    else{
+      return null;
+    }
   }
 
   render() {
@@ -52,11 +107,11 @@ class App extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-              {this.state.moveOptions.map((moveOption)=>{
+              {/* {this.state.moveOptions.map((moveOption, index)=>{
                 return (
-                  <BookList bookshelfTitle={moveOption} books={this.state.booksByCategory[moveOption]} options={this.state.moveOptions} /> 
+                  <BookList key={index+1} bookshelfTitle={moveOption} books={this.state.booksByCategory[moveOption]} options={this.state.moveOptions} /> 
                 );
-              })}
+              })} */}
               </div>
             </div>
             <div className="open-search">

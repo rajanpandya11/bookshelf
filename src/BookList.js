@@ -3,9 +3,10 @@ import React from "react";
 const BookList = (props) => {
     const {bookshelfTitle, books, options } = props;
     return (
-        <div className="bookshelf">
+        <div className="bookshelf">            
             <h2 className="bookshelf-title">{bookshelfTitle}</h2> 
             <div className="bookshelf-books">
+                { books !== null && 
                 <ol className="books-grid">
                     {books.map((book, item) => {
                         const someKey = Math.floor((item+Math.random()*100)*Math.random()*100);
@@ -31,7 +32,7 @@ const BookList = (props) => {
                             </li>
                         );
                     })}
-                </ol>
+                </ol> }
             </div>
         </div>
     );
