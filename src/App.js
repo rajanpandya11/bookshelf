@@ -69,7 +69,7 @@ class App extends React.Component {
   lookUpBooks = (searchTerm) => {
     this.setState( { searchTerm : searchTerm });   
     if(searchTerm.length > 2){
-      BooksAPI.search(searchTerm, 25).then((books) => {
+      BooksAPI.search(searchTerm, 30).then((books) => {
         this.setState( { searchedBooks : books })
       });
     }
