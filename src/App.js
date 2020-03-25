@@ -17,11 +17,12 @@ class App extends React.Component {
      */
     showSearchPage: false,
     bookList: [],
-    moveOptions: [ "Read", "Currently Reading", "Want to Read"],
-    booksIdByCategory:  { "Read": [], "Currently Reading": [], "Want to Read": ["nggnmAEACAAJ", "evuwdDLfAyYC", "jAUODAAAQBAJ"] },
+    moveOptions: [ "None", "Read", "Currently Reading", "Want to Read"],
+    booksIdByCategory:  { "None":[], "Read": [], "Currently Reading": [], "Want to Read": ["nggnmAEACAAJ", "evuwdDLfAyYC", "jAUODAAAQBAJ"] },
     booksByCategory:  { },
     searchTerm: '',
-    searchedBooks: []
+    searchedBooks: [],
+    downloadStarted: false
   }
 
   fillInTheBooks = () => {
@@ -85,8 +86,8 @@ class App extends React.Component {
     }
   }
 
-  moveTheBook = (bookObject) => {
 
+  moveTheBook2 = (bookObject) => {
     //if bookObject is not what we want
     if(bookObject === undefined){
       console.log('bookObject was undefined: ', bookObject);
@@ -98,6 +99,10 @@ class App extends React.Component {
     let updatedBookListArray = this.state.bookList.slice();
     let updateNewOptionArray = this.state.booksIdByCategory[bookObject.newOption].slice();
     let updateNewOptionArray2 = this.state.booksByCategory[bookObject.newOption].slice();
+
+    if(bookObject.newBook){
+      updatedBookListArray.push( bookObject.theBook );     
+    }
 
     if(!bookObject.newBook){
 
@@ -122,17 +127,7 @@ class App extends React.Component {
       bookObject.updateOldOptionArray2 = updateOldOptionArray2;
     }
 
-    if(bookObject.newBook){
-      //first download the book and add it to the bookObject
-      BooksAPI.get(bookObject.bookId)
-      .then((book) => {
-        bookObject.theBook = book; 
-      });
 
-      //then add it to booklist
-      updatedBookListArray.push( bookObject.theBook ); 
-
-    }
 
     //make sure not adding duplicate books to arrays
     if(!updateNewOptionArray.includes(bookObject.bookId)){
@@ -163,7 +158,34 @@ class App extends React.Component {
       console.log(' App state after moveTheBook is finished: ', this.state);
       console.log(' bookObject after moveTheBook is finished: ', bookObject);
     });
+  }
 
+
+  moveTheBook = (bookObject) => {
+    if(bookObject === undefined){
+      console.log('bookObject was undefined: ', bookObject);
+      this.setState({});
+      return null;
+    }
+
+    if(bookObject.newBook ){
+        // console.log('sending the api call now: ', bookObject); 
+        BooksAPI.get(bookObject.bookId).then((book) => {
+        // console.log('in the first then func now: ', book); 
+        bookObject.theBook = book; 
+        // console.log('thebook is added to bookObject: ', bookObject); // Success!
+      }, reason => {
+        console.log('thebook is not added to bookObject, reason: ', reason); // failure!
+      }).then(result =>
+          { 
+            // console.log('after successful completion bookObject: ', bookObject); 
+            this.moveTheBook2(bookObject);
+          } 
+      );
+    }
+    else{
+      this.moveTheBook2(bookObject);
+    }
   }
 
   render() {

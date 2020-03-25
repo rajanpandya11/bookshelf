@@ -7,7 +7,8 @@ class NewBookList extends Component  {
         oldOption: '',
         newBook: true,
         bookTitle: '',
-        bookId: ''
+        bookId: '',
+        value: 'a'
     }
 
     render(){
@@ -34,11 +35,12 @@ class NewBookList extends Component  {
                                     <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + imagelink + ')' }}></div>
                                     <div className="book-shelf-changer">
-                                        <select onChange={(e) => handleChange(e, book.id, book.title )} value={this.state.value}>
+                                        <select onChange={(e) => handleChange(e, book.id, book.title )} value={this.state.value} >
+                                            <option disabled value="a"> -- select an option -- </option>
                                             {options.map((book_option, option_item)=> {
                                                 const some = Math.floor((option_item+Math.random()*100)*Math.random()*100);                                                
                                                 return(
-                                                        <option key={some} value={book_option}> {book_option} </option>
+                                                        <option key={some} value={book_option} > {book_option} </option>
                                                 );
                                             })}
                                         </select>
