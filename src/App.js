@@ -78,88 +78,93 @@ class App extends React.Component {
   findTheIndex = (arr,value) => {
     var ans = -1;
     for (var i=0; i< arr.length;i++){
-      if(arr[i] === value){
+      if(arr[i] === value || arr[i].id === value){
         ans = i;        
         return ans;
       }
     }
   }
 
-  moveTheBook = (newOption, bookid) => {
-    //temp is to see if the bookid exist in current state, if it does, then we need to know under which option, and index of it
+  moveTheBook = (bookObject) => {
 
-    let moveOptions = this.state.moveOptions.slice();
-    moveOptions.splice(this.findTheIndex(moveOptions,newOption),1);
-    let bookObject = {};
-    moveOptions.some((option,index) => {
-      let oldIndex = this.findTheIndex(this.state.booksIdByCategory[option], bookid);
-      if(oldIndex > -1){
-        bookObject = { oldCategory: option, oldIndex: oldIndex, bookId: bookid, newCategory: newOption};
-        return true;
-      }
-    });
-    
-    //create a blank object
-    const newObject1 = {};
-    //only if bookid is found, then remove it from that option list 
-    if(bookObject.oldCategory !== undefined){
-      const updatedArray1 = this.state.booksIdByCategory[bookObject.oldCategory].slice();
-      updatedArray1.splice(bookObject.oldIndex, 1);
-      newObject1[bookObject.oldCategory] = updatedArray1;
-    }  
-
-  // so we have a newObject that is really the old category array updated just now with removal of that book.
-  // now we will create an another object where this book is moving.
-
-    const updatedArray2 = this.state.booksIdByCategory[newOption].slice();
-    updatedArray2.push(bookid);
-    const newObject2 = {};
-    newObject2[newOption] = updatedArray2;
-
-    const newState1 = Object.assign(this.state.booksIdByCategory, newObject1, newObject2);
-
-    const updatedBooksArray = this.state.bookList.slice();
-
-    const newObject3 = {};
-    if(bookObject.oldCategory !== undefined){
-      const updatedBooksByCategoryArray1 = this.state.booksByCategory[bookObject.oldCategory].slice();
-      const temp2 = this.state.booksByCategory[newOption].forEach((item,index) => {
-        if(item.id === bookid)
-          return { oldIndex: index }
-      });
-      if(temp2 !== undefined)
-        updatedBooksByCategoryArray1.splice(temp2.oldIndex, 1);
-      newObject3[bookObject.oldCategory] = updatedBooksByCategoryArray1;
-    }  
-
-
-    const updatedBooksByCategoryArray2 = this.state.booksByCategory[newOption].slice();
-
-    if( this.state.bookList.filter((book) => book.id === bookid).length > 0){
-      const theBook = this.state.bookList.filter((book) => book.id === bookid)[0];
-      updatedBooksByCategoryArray2.push(theBook);
-    }else{
-      BooksAPI.get(bookid)
-      .then((book) => {
-        updatedBooksArray.push(book);
-        updatedBooksByCategoryArray2.push(book);
-      });
+    //if bookObject is not what we want
+    if(bookObject === undefined){
+      console.log('bookObject was undefined: ', bookObject);
+      this.setState({});
+      return null;
     }
 
-    const newObject4 = {};
-    newObject4[newOption] = updatedBooksByCategoryArray2.slice();
+    // temp copy of the arrays
+    let updatedBookListArray = this.state.bookList.slice();
+    let updateNewOptionArray = this.state.booksIdByCategory[bookObject.newOption].slice();
+    let updateNewOptionArray2 = this.state.booksByCategory[bookObject.newOption].slice();
 
-    const newState2 = Object.assign(this.state.booksByCategory, newObject3, newObject4);
+    if(!bookObject.newBook){
 
+      //get all the data needed i.e. the indexes to be removed
 
-    this.setState( {bookList: updatedBooksArray, booksIdByCategory: newState1, booksByCategory: newState2}
-      , () => { console.log('state after moveTheBook method complete: ', this.state);  }
-    );
+      let updateOldOptionArray = this.state.booksIdByCategory[bookObject.oldOption].slice();
+      let updateOldOptionArray2 = this.state.booksByCategory[bookObject.oldOption].slice();
+      let oldIndex = this.findTheIndex(updateOldOptionArray, bookObject.bookId);
+      bookObject.oldIndex = oldIndex;
+      let oldIndex2 = this.findTheIndex(updateOldOptionArray2,bookObject.bookId);
+      bookObject.oldIndex2 = oldIndex2;
+
+      //remove it from booksByCategory[oldOption]
+      updateOldOptionArray.splice(oldIndex,1);
+
+      //then remove it from booksByCategory[oldOption]
+      updateOldOptionArray2.splice(oldIndex2,1);
+
+      //then add it to the bookObject
+      bookObject.theBook = this.state.booksByCategory[bookObject.oldOption][oldIndex2]; 
+      bookObject.updateOldOptionArray = updateOldOptionArray;
+      bookObject.updateOldOptionArray2 = updateOldOptionArray2;
+    }
+
+    if(bookObject.newBook){
+      //first download the book and add it to the bookObject
+      BooksAPI.get(bookObject.bookId)
+      .then((book) => {
+        bookObject.theBook = book; 
+      });
+
+      //then add it to booklist
+      updatedBookListArray.push( bookObject.theBook ); 
+
+    }
+
+    //make sure not adding duplicate books to arrays
+    if(!updateNewOptionArray.includes(bookObject.bookId)){
+
+      //then add it to booksIdByCategory[newOption]
+      updateNewOptionArray.push(bookObject.bookId);
+
+      //then add it to booksByCategory[newOption]
+      updateNewOptionArray2.push(bookObject.theBook);
+
+    }
+
+    //craete temp objects prior for setstate
+    let target1 = JSON.parse(JSON.stringify(this.state.booksIdByCategory));
+    target1[bookObject.oldOption] = bookObject.updateOldOptionArray;
+    target1[bookObject.newOption] = updateNewOptionArray;
+
+    let target2 = JSON.parse(JSON.stringify(this.state.booksByCategory));
+    target2[bookObject.oldOption] = bookObject.updateOldOptionArray2;
+    target2[bookObject.newOption] = updateNewOptionArray2;
+
+    //then update the state      
+    this.setState({
+      booksIdByCategory: target1,
+      booksByCategory: target2,
+      bookList: updatedBookListArray
+    }, ()=> {
+      console.log(' App state after moveTheBook is finished: ', this.state);
+      console.log(' bookObject after moveTheBook is finished: ', bookObject);
+    });
 
   }
-
-
-  printState = () => {  console.log('current state: ', this.state); }
 
   render() {
     return (
@@ -208,7 +213,6 @@ class App extends React.Component {
             </div>
           </div>
         )}
-        <button onClick={this.printState}> print the state</button>
       </div>
     )
   }

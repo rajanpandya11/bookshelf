@@ -3,16 +3,22 @@ import React, { Component } from "react";
 class NewBookList extends Component  {
 
     state = {
-        value: ''
+        newOption: '',
+        oldOption: '',
+        newBook: true,
+        bookTitle: '',
+        bookId: ''
     }
 
     render(){
         const { books, options, moveTheBook } = this.props;
     
-        const handleChange = (event, bookid) => {
-            this.setState({value: event.target.value});
+        const handleChange = (event, bookid, title) => {
             console.log('event object for clicking after new option: ', event);        
-            moveTheBook(event.target.value, bookid);
+            this.setState({newOption:event.target.value, bookId: bookid, bookTitle: title}, () => {
+                moveTheBook(this.state);
+            });
+            
         }
         
         return (
@@ -28,7 +34,7 @@ class NewBookList extends Component  {
                                     <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + imagelink + ')' }}></div>
                                     <div className="book-shelf-changer">
-                                        <select onChange={(e) => handleChange(e, book.id )} value={this.state.value}>
+                                        <select onChange={(e) => handleChange(e, book.id, book.title )} value={this.state.value}>
                                             {options.map((book_option, option_item)=> {
                                                 const some = Math.floor((option_item+Math.random()*100)*Math.random()*100);                                                
                                                 return(
