@@ -27,31 +27,31 @@ class App extends React.Component {
   fillInTheBooks = () => {
     this.state.moveOptions.map(
       (moveOption) => {
-        const arr = this.state.booksIdByCategory[moveOption];
+        let arr = this.state.booksIdByCategory[moveOption].slice();
         if(arr.length > 0)
         {
-          const bookObjects = [];
+          let bookObjects = [];
           arr.map((bookid) => 
             {
-              const thebook = this.state.bookList.filter(book => book.id === bookid)[0];
+              let thebook = JSON.parse(JSON.stringify(this.state.bookList.filter(book => book.id === bookid)[0]));
               bookObjects.push(thebook);
             }
           );      
 
           this.setState( (prevState) => {
-              const newBooks = {};
+              let newBooks = {};
               newBooks[moveOption] = bookObjects;
-              const newBooksByCategoryObject = Object.assign(prevState.booksByCategory, newBooks ); 
+              let newBooksByCategoryObject = Object.assign(JSON.parse(JSON.stringify(prevState.booksByCategory)), newBooks ); 
               return {booksByCategory: newBooksByCategoryObject};
-            }, () => {console.log('state after fillintheblanks method complete: ', this.state);} 
+            }, () => {console.log('state after fillintheblanks method complete 1: ', this.state);} 
           );
         } else{
           this.setState( (prevState) => {
-              const newBooks = {};
+              let newBooks = {};
               newBooks[moveOption] = [];
-              const newBooksByCategoryObject = Object.assign(prevState.booksByCategory, newBooks ); 
+              let newBooksByCategoryObject = Object.assign(JSON.parse(JSON.stringify(prevState.booksByCategory)), newBooks ); 
               return {booksByCategory: newBooksByCategoryObject};
-            }, () => {console.log('state after fillintheblanks method complete: ', this.state);} 
+            }, () => {console.log('state after fillintheblanks method complete 2: ', this.state);} 
           );
         }
       }
@@ -167,6 +167,8 @@ class App extends React.Component {
   }
 
   render() {
+    let moveOptions = ["None", "Read", "Currently Reading" ,"Want to Read"];
+
     return (
       <div className="app">
         {this.state.showSearchPage ? (
@@ -185,7 +187,7 @@ class App extends React.Component {
                 <input type="text" placeholder="Search by title or author" value={this.state.searchTerm} onChange={(e)=> this.lookUpBooks(e.target.value) }/>
                 {
                   this.state.searchedBooks.length > 0 && 
-                  <NewBookList books={this.state.searchedBooks} options={this.state.moveOptions} moveTheBook={(a,b) => this.moveTheBook(a,b)}/> 
+                  <NewBookList books={this.state.searchedBooks} options={moveOptions} moveTheBook={this.moveTheBook}/> 
                 }
               </div>
             </div>
@@ -200,10 +202,11 @@ class App extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-              {this.state.moveOptions.map((moveOption, index)=>{
+              {
+              moveOptions.map((moveOption, index)=>{
                 const booksToShow = this.state.booksByCategory[moveOption];
                 return (
-                  <BookList key={index+1} bookshelfTitle={moveOption} books={booksToShow} options={this.state.moveOptions} moveTheBook={(a,b) => this.moveTheBook(a,b)} /> 
+                  <BookList key={index+1} bookshelfTitle={moveOption} books={booksToShow} options={moveOptions} moveTheBook={this.moveTheBook} /> 
                 );
               })}
               </div>
