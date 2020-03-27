@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import Book from "./Book";
 class NewBookList extends Component  {
 
     state = {
@@ -14,12 +14,10 @@ class NewBookList extends Component  {
     render(){
         const { books, options, moveTheBook } = this.props;
     
-        const handleChange = (event, bookid, title) => {
-            console.log('event object for clicking after new option: ', event);        
-            this.setState({newOption:event.target.value, bookId: bookid, bookTitle: title}, () => {
+        const handleChange = (newOption, book) => {
+            this.setState({newOption: newOption, oldOption: 'None', bookId: book.id, bookTitle: book.title}, () => {
                 moveTheBook(this.state);
             });
-            
         }
         
         return (
@@ -30,25 +28,10 @@ class NewBookList extends Component  {
                         {books.map((book, item) => {
                             const someKey = Math.floor((item+Math.random()*100)*Math.random()*100);
                             const imagelink = book.imageLinks !== undefined ? book.imageLinks['thumbnail'] : '';
-                            return  (  <li key={someKey}>
-                                <div className="book">
-                                    <div className="book-top">
-                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + imagelink + ')' }}></div>
-                                    <div className="book-shelf-changer">
-                                        <select onChange={(e) => handleChange(e, book.id, book.title )} value={this.state.value} >
-                                            <option disabled value="a"> -- select an option -- </option>
-                                            {options.map((book_option, option_item)=> {
-                                                const some = Math.floor((option_item+Math.random()*100)*Math.random()*100);                                                
-                                                return(
-                                                        <option key={some} value={book_option} > {book_option} </option>
-                                                );
-                                            })}
-                                        </select>
-                                    </div>
-                                    </div>
-                                    <div className="book-title">{book.title}</div>
-                                    <div className="book-authors">{book.author}</div>
-                                </div>
+                            book.imagelink = imagelink;
+                            return  (  
+                                <li key={someKey}>
+                                    <Book options={options} book={book} handleChange={handleChange} />
                                 </li>
                             );
                         })}
@@ -62,3 +45,23 @@ class NewBookList extends Component  {
 } 
 
 export default NewBookList;
+
+
+// <div className="book">
+// <div className="book-top">
+// <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + imagelink + ')' }}></div>
+// <div className="book-shelf-changer">
+//     <select onChange={(e) => handleChange(e, book.id, book.title )} value={this.state.value} >
+//         <option disabled value="a"> -- select an option -- </option>
+//         {options.map((book_option, option_item)=> {
+//             const some = Math.floor((option_item+Math.random()*100)*Math.random()*100);                                                
+//             return(
+//                     <option key={some} value={book_option} > {book_option} </option>
+//             );
+//         })}
+//     </select>
+// </div>
+// </div>
+// <div className="book-title">{book.title}</div>
+// <div className="book-authors">{book.author}</div>
+// </div>

@@ -1,2 +1,4 @@
 node_modules/
 MY_Read.md
+yarn.lock
+book_object_example.json
