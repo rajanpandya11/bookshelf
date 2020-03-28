@@ -94,7 +94,7 @@ class App extends Component{
                                         updateBookList={this.updateBookList} 
                                         books={this.state.bookList.slice()} />
                                 )
-                                )
+                            )
                         }
                         </div>
                         </div>

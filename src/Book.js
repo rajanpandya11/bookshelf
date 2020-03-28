@@ -2,9 +2,6 @@ import React, { Component } from "react";
 
 class Book extends Component{
 
-    constructor(props){
-        super(props);
-    }
 
     handleChange = (event) => {
         this.props.handleChange(event.target.value, this.props.book);
