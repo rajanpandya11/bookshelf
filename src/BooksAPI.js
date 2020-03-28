@@ -15,7 +15,7 @@ const headers = {
 export const get = (bookId) =>
   fetch(`${api}/books/${bookId}`, { headers })
     .then(res => res.json())
-    .then((data) => { console.log('in the api call now: ', data.book); return data.book; });
+    .then((data) => { return data.book; });
 
 export const getAll = () =>
   fetch(`${api}/books`, { headers })
@@ -42,9 +42,6 @@ export const search = (query, maxResults) =>
     body: JSON.stringify({ query, maxResults })
   }).then(res => res.json())
     .then(data => {
-      if (data.books.error){
-        return [];
-      }
-      return data.books.slice(0,maxResults)
+      return data.books;
     }
   );

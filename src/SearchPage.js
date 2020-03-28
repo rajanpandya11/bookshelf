@@ -1,15 +1,67 @@
-import  React, { PureComponent  } from "react";
-import { Link } from "react-router-dom";
-import NewBookList from './NewBookList';
+import React, { Component } from "react";
+import * as BooksAPI from "./BooksAPI";
+import Book from './Book';
+import { Link } from 'react-router-dom';
 
 
-class SearchPage extends PureComponent {
+class SearchPage extends Component{
+
+    constructor(props){
+        super(props);
+
+        this.state = {
+            searchTerm: '',
+            searchedBooks: []
+        }
+    }
+
+    handleSearch =(event) => {
+        let query = event.target.value.toLowerCase();
+        if(query.length > 2){
+            BooksAPI.search(query).then((books) => {
+                if(books.length === 0) { this.setState({ searchTerm: query, searchedBooks: []}); }
+                if(books && books.length > 0) { this.setState({ searchTerm: query, searchedBooks: books }); } 
+            });
+        } 
+        if(query.length >= 0){
+            this.setState({searchTerm: query});            
+        }
+
+    }
+
+    getBooks = () => {
+        let query = this.state.searchTerm.toLowerCase();
+        if(query.length > 2){
+            BooksAPI.search(query).then((books) => {
+                if(books.length === 0) { this.setState({searchedBooks: []}); }
+                if(books && books.length > 0) { 
+                    this.setState({ searchedBooks: books }); 
+                } 
+            });
+        }        
+    }
+
+    handleChange = (newShelf, book) => {
+        BooksAPI.update(book, newShelf).then((res) => console.log(res)).then( ()=> {this.props.updateBookList(book)} );
+    }
+
+    findTheShelf = (book) => {
+        this.props.bookList.some((b) => {
+            if(b.id === book.id){
+                book.shelf = b.shelf; 
+                return true; 
+            }
+        });
+        if(book.shelf === undefined || book.shelf === '')
+            book.shelf = 'none';
+        return book.shelf ;
+    }
 
     render(){
-        let { searchedBooks, moveOptions, moveTheBook, lookUpBooks, searchTerm } = this.props;
+
+        let { bookShelves } = this.props;
 
         return(
-            
             <div className="search-books">
                 <div className="search-books-bar">
                     <Link className="close-search" to="/">Close</Link>                
@@ -22,10 +74,22 @@ class SearchPage extends PureComponent {
                         However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                         you don't find a specific author or title. Every search is limited by search terms.
                         */}
-                        <input type="text" placeholder="Search by title or author" value={searchTerm} onChange={(e)=> lookUpBooks(e.target.value) }/>
+                        <input type="text" placeholder="Search by title or author" value={this.state.searchTerm} onChange={this.handleSearch}/>
                         {
-                        searchedBooks.length > 0 && 
-                            <NewBookList books={searchedBooks} options={moveOptions} moveTheBook={moveTheBook}/> 
+                            <ol className="books-grid">
+                            {
+                                this.state.searchedBooks.map((book, item) => {
+                                 const imagelink = book.imageLinks !== undefined ? book.imageLinks['thumbnail'] : '';
+                                 book.imagelink = imagelink;
+                                 book.shelf = this.findTheShelf(book);
+                                 return  (  
+                                     <li key={item+1}>
+                                         <Book shelves={bookShelves} book={book} handleChange={(a,b) => this.handleChange(a,b)}/>
+                                     </li>
+                                 );
+                                 })
+                            }
+                            </ol>
                         }
                     </div>
                     </div>
@@ -35,19 +99,8 @@ class SearchPage extends PureComponent {
             </div>
 
         );
-
     }
 
 }
 
-// SearchPage.prototype = {
-//     searchedBooks: PropTypes.array.isRequired, 
-//     moveOptions: PropTypes.array.isRequired, 
-//     moveTheBook: PropTypes.func.isRequired, 
-//     lookUpBooks: PropTypes.func.isRequired, 
-//     searchTerm: PropTypes.string.isRequired
-// }
-
 export default SearchPage;
-
-
