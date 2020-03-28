@@ -6,6 +6,9 @@ import BookList from "./BookList";
 import SearchPage from "./SearchPage";
 
 
+/**
+* @description this is main component
+*/
 class App extends Component{
 
     constructor(props){
@@ -16,11 +19,18 @@ class App extends Component{
         }
     }
 
+    /**
+    * @description this functions invokes after component is mounted on DOM and to do any ajax sort of requests
+    */
     componentDidMount(){
         this.downloadTheBooks();
     }
 
 
+    /**
+    * @description this functions gets invoked when user moves a book to a new shelf both from home page and search page
+    * @param {object} book - the book object
+    */
     updateBookList = (book) => {
         BooksAPI.get(book.id).then((book) => {
             if(!this.isNewBook(book) ){
@@ -39,6 +49,10 @@ class App extends Component{
     }
 
 
+    /**
+    * @description this functions takes in a book object and returns if it is already in app state or a new book 
+    * @param {object} newBook - the book object
+    */
     isNewBook = (newBook) => {
         if(this.state.bookList.length > 0) {
             let temp = this.state.bookList.slice().filter((book) => book.id === newBook.id  );
@@ -49,17 +63,9 @@ class App extends Component{
         }
     }
 
-    isShelfUpdated = (book) => {
-        let check1 = this.state.bookList.filter((b) => b.id === book.id);
-        let check2 = check1.slice((b) => b.shelf !== book.shelf);
-        if(check1.length === 1 && check2.length === 1)        {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
+    /**
+    * @description this functions gets invoked after component is mounted, and it will download the books from api
+    */
     downloadTheBooks = () => {
 
         BooksAPI.getAll().then((books)=> books).then((books) => {

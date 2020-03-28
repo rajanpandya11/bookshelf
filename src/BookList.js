@@ -2,16 +2,22 @@ import React, { Component } from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from './Book';
 
+
+/**
+* @description this component manages and displays booklist on / url page
+*/
 class BookList extends Component{
 
-    // constructor(props){
-    //     super(props);
-    // }
-
+    /**
+    * @description this functions invokes after component is mounted on DOM and to do any ajax sort of requests
+    */
     componentWillMount(){
         this.getTheBooks();
     }
 
+    /**
+    * @description this functions return a book list for each bookshelf
+    */
     getTheBooks = () =>{
         let books = this.props.books;
         let bookshelf = this.props.bookshelf;
@@ -19,10 +25,19 @@ class BookList extends Component{
         return books;
     }
 
+    /**
+    * @description this functions checks if a book is already in app state or is a new book 
+    * @param {object} newBook - the book object
+    */
     handleChange(newShelf, book){
         BooksAPI.update(book, newShelf).then((res) => console.log(res)).then(()=> {this.props.updateBookList(book)} );
     }
 
+
+    /**
+    * @description  this function returns a string based on given string for display purposes.
+    * @param {string} str - given string 
+    */
     convertForAPI = (str) => {
         if(str === "none")
             return "None";

@@ -3,6 +3,9 @@ import * as BooksAPI from "./BooksAPI";
 import Book from './Book';
 import { Link } from 'react-router-dom';
 
+/**
+* @description this component manages and displays to /search url page
+*/
 
 class SearchPage extends Component{
 

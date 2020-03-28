@@ -1,13 +1,23 @@
 import React, { Component } from "react";
 
+/**
+* @description this component displays an individual book
+*/
 class Book extends Component{
 
-
+    /**
+    * @description this function manages change event on book's shelf change 
+    * @param {object} event - it is an event object that is raised when a new shelf option is selected by user  
+    */
     handleChange = (event) => {
         this.props.handleChange(event.target.value, this.props.book);
     }
 
-    convertForAPI = (str) => {
+    /**
+    * @description this function returns a string based on given string for display purposes.
+    * @param {string} str - given string 
+    */
+    stringsForDisplay = (str) => {
         if(str === "none")
             return "None";
         if(str === "wantToRead")
@@ -17,7 +27,6 @@ class Book extends Component{
         if(str === "read")
             return "Read";
     }
-
 
     render(){
         let { book, shelves } = this.props;
