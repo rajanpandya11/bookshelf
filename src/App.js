@@ -68,7 +68,7 @@ class App extends Component{
     */
     downloadTheBooks = () => {
 
-        BooksAPI.getAll().then((books)=> books).then((books) => {
+        BooksAPI.getAll().then((books) => {
 
             let temp = books === undefined ? [] : books.slice();
             temp = temp.filter((book) => this.isNewBook(book)).slice();
