@@ -28,8 +28,6 @@ class SearchPage extends Component{
             BooksAPI.search(query).then((books) => {
                 if(books.length === 0) { this.setState({ searchTerm: query, searchedBooks: []}); }
                 if(books && books.length > 0) {
-                    console.log('search : ', query);
-                    console.log('after search returns: ', books); 
                     this.setState({ searchTerm: query, searchedBooks: books }); 
                 } 
             });
@@ -107,19 +105,3 @@ class SearchPage extends Component{
 
 export default SearchPage;
 
-
-
-
-
-// getBooks = () => {
-//     let query = this.state.searchTerm.toLowerCase();
-//     if(query.length > 2){
-//         BooksAPI.search(query).then((books) => {
-//             if(books.length === 0) { this.setState({searchedBooks: []}); }
-//             if(books && books.length > 0) { 
-
-//                 this.setState({ searchedBooks: books }); 
-//             } 
-//         });
-//     }        
-// }
