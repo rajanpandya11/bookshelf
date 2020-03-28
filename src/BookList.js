@@ -30,7 +30,7 @@ class BookList extends Component{
     * @param {object} newBook - the book object
     */
     handleChange(newShelf, book){
-        BooksAPI.update(book, newShelf).then((res) => console.log(res)).then(()=> {this.props.updateBookList(book)} );
+        BooksAPI.update(book, newShelf).then((res) => {this.props.updateBookList(book)});
     }
 
 
