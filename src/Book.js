@@ -40,7 +40,7 @@ class Book extends Component{
                             <option disabled value="a"> -- select a shelf -- </option>
                             {shelves.map((shelf_option, shelf_item)=> {
                                 return(
-                                    <option key={shelf_item+1} value={shelf_option} > {this.convertForAPI(shelf_option)} </option>
+                                    <option key={shelf_item+1} value={shelf_option}> { this.stringsForDisplay(shelf_option) } </option>
                                 );
                             })}
                         </select>
