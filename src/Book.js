@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 
 /**
 * @description this component displays an individual book
 */
-class Book extends Component{
+class Book extends PureComponent{
 
     /**
     * @description this function manages change event on book's shelf change 
@@ -47,7 +47,9 @@ class Book extends Component{
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.author}</div>
+                {book.authors.map((author) => (
+                    <div className="book-authors">{author}</div>
+                ))}
             </div>
         );
     }

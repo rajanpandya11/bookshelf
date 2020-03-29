@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import * as BooksAPI from "./BooksAPI";
 import Book from './Book';
 
@@ -6,7 +6,7 @@ import Book from './Book';
 /**
 * @description this component manages and displays booklist on / url page
 */
-class BookList extends Component{
+class BookList extends PureComponent{
 
     /**
     * @description this functions invokes after component is mounted on DOM and to do any ajax sort of requests
