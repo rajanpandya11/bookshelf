@@ -15,7 +15,8 @@ class SearchPage extends Component{
 
         this.state = {
             searchTerm: '',
-            searchedBooks: []
+            searchedBooks: [],
+            keywords: ['Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 'Future', 'Games', 'Gandhi', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS']
         }
     }
 
@@ -24,17 +25,24 @@ class SearchPage extends Component{
     * @param {string} query - query is what user types in to input field
     */
     handleSearch = (query) => {
-        query = query.toLowerCase();
-        if(query.length > 2){
+        if(query !== undefined){
+            query = query.trim().toLowerCase();
+            if(query.length === 0)
+            {
+                this.setState({searchTerm: query, searchedBooks: []});
+                return;
+            }
+            if(!this.state.keywords.slice().map(k => k.toLowerCase()).includes(query)) 
+            { 
+                this.setState({ searchTerm: query, searchedBooks: []}); 
+                return;
+            }
             BooksAPI.search(query).then((books) => {
-                if(books.length === 0) { this.setState({ searchTerm: query, searchedBooks: []}); }
                 if(books && books.length > 0) {
                     this.setState({ searchTerm: query, searchedBooks: books }); 
                 } 
             });
-        } 
-        if(query.length >= 0){
-            this.setState({searchTerm: query});            
+            return;
         }
     }
 
@@ -73,7 +81,9 @@ class SearchPage extends Component{
                 <div className="search-books-bar">
                     <Link className="close-search" to="/">Close</Link>                
                     <div className="search-books-input-wrapper">
-                        <input type="text" placeholder="Search by title or author" value={this.state.searchTerm} onChange={(e) => this.handleSearch(e.target.value)}/>
+                        <input type="text" placeholder="Search by title or author" 
+                                value={this.state.searchTerm} 
+                                onChange={(e) => this.handleSearch(e.target.value)}/>
                     </div>
                 </div>
                 <div className="search-books-results">
