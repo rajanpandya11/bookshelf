@@ -10,16 +10,12 @@ import Book from './Book';
 
 class SearchPage extends Component{
 
-    constructor(props){
-        super(props);
-
-        this.state = {
-            searchTerm: '',
-            searchedBooks: [],
-            keywords: ['Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 'Future', 'Games', 'Gandhi', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS']
-        }
+    state = {
+        searchTerm: '',
+        searchedBooks: [],
+        keywords: ['Android', 'Art', 'Artificial Intelligence', 'Astronomy', 'Austen', 'Baseball', 'Basketball', 'Bhagat', 'Biography', 'Brief', 'Business', 'Camus', 'Cervantes', 'Christie', 'Classics', 'Comics', 'Cook', 'Cricket', 'Cycling', 'Desai', 'Design', 'Development', 'Digital Marketing', 'Drama', 'Drawing', 'Dumas', 'Education', 'Everything', 'Fantasy', 'Film', 'Finance', 'First', 'Fitness', 'Football', 'Future', 'Games', 'Gandhi', 'Homer', 'Horror', 'Hugo', 'Ibsen', 'Journey', 'Kafka', 'King', 'Lahiri', 'Larsson', 'Learn', 'Literary Fiction', 'Make', 'Manage', 'Marquez', 'Money', 'Mystery', 'Negotiate', 'Painting', 'Philosophy', 'Photography', 'Poetry', 'Production', 'Programming', 'React', 'Redux', 'River', 'Robotics', 'Rowling', 'Satire', 'Science Fiction', 'Shakespeare', 'Singh', 'Swimming', 'Tale', 'Thrun', 'Time', 'Tolstoy', 'Travel', 'Ultimate', 'Virtual Reality', 'Web Development', 'iOS']
     }
-
+    
     /**
     * @description this function fetches books based on given search terms
     * @param {string} query - query is what user types in to input field
@@ -27,26 +23,22 @@ class SearchPage extends Component{
     handleSearch = (query) => {
         if(query !== undefined){
             query = query.trim().toLowerCase();
-            if(query.length === 0)
+            if( query.length === 0  ||  
+                !this.state.keywords.slice().map(k => k.toLowerCase()).includes(query) )
             {
-                this.setState({searchTerm: query, searchedBooks: []});
-                return;
+                this.setState({searchTerm: query});
             }
-            if(!this.state.keywords.slice().map(k => k.toLowerCase()).includes(query)) 
-            { 
-                this.setState({ searchTerm: query, searchedBooks: []}); 
-                return;
+            else{ 
+                BooksAPI.search(query).then((books) => {
+                    if(books && books.length > 0) {
+                        this.setState({ searchTerm: query, searchedBooks: books }); 
+                    } 
+                });
             }
-            BooksAPI.search(query).then((books) => {
-                if(books && books.length > 0) {
-                    this.setState({ searchTerm: query, searchedBooks: books }); 
-                } 
-            });
-            return;
         }
     }
 
-
+    
     /**
     * @description this function updates shelf for a book, when a new shelf is clicked from UI in book's drop down menu 
     * @param {string} newShelf - is the value for shelf key to be updated for the book object
