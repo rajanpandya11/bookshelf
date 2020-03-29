@@ -23,7 +23,10 @@ To get started developing right away:
     ├── App.css # Styles for your app. Feel free to customize this as you desire.
     ├── App.js # This is the root of your app. Contains static HTML right now.
     ├── App.test.js # Used for testing. Provided with Create React App. Testing is encouraged, but not required.
+    ├── Book.js # This is used to display individual book  
     ├── BooksAPI.js # A JavaScript API for the provided Udacity backend. Instructions for the methods are below.
+    ├── BookList.js # This is used to show user's books and the shelves they are in 
+    ├── SearchPage.js # This is a page where user can search keywords and get books in response
     ├── icons # Helpful images for your app. Use at your discretion.
     │   ├── add.svg
     │   ├── arrow-back.svg
@@ -84,4 +87,19 @@ The backend API uses a fixed set of cached search results and is limited to a pa
 ## Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). You can find more information on how to perform common tasks [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
+
+## My Approach
+
+* The app is made with `create-react-app` template, and can be build simply by `npm install` and then `npm start` commands.
+
+* The approach was to start with making components and what they will be used for.
+
+* A Book Component was required, to display the content of just one book, and it can be used to display all books by passing in book information by props.
+
+* There are two main windows, I made use of routes (react-router), so that user can go back and forth by the app's navigation buttons and browser's buttons. 
+    * moving an existing book from a shelf to different shelf
+    * searching new books and adding them to a shelf
+
+* My initial approach was to store all the user's book related activities locally (which changed after I learned more about the Udacity data API). I made it working, but since the state can only be saved as long as the page is not hard refreshed. The API was allowing dev to pass in updated shelf value for books, which again can be received by get method, and this way the state does not change with a page refresh.
+
 

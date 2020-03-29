@@ -56,5 +56,4 @@ class Book extends PureComponent{
 
 }
 
-
 export default Book;
