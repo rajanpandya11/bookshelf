@@ -47,7 +47,7 @@ class Book extends PureComponent{
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                {book.authors.map((author, index) => (
+                {book.authors !== undefined && book.authors.map((author, index) => (
                     <div key={index+1} className="book-authors">{author}</div>
                 ))}
             </div>
