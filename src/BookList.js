@@ -27,7 +27,8 @@ class BookList extends PureComponent{
 
     /**
     * @description this functions checks if a book is already in app state or is a new book 
-    * @param {object} newBook - the book object
+    * @param {object} book - the book object
+    * @param {string} newShelf - new shelf for the book object 
     */
     handleChange(newShelf, book){
         BooksAPI.update(book, newShelf).then((res) => {this.props.updateBookList(book)});
@@ -38,7 +39,7 @@ class BookList extends PureComponent{
     * @description  this function returns a string based on given string for display purposes.
     * @param {string} str - given string 
     */
-    convertForAPI = (str) => {
+   stringsForDisplay = (str) => {
         if(str === "none")
             return "None";
         if(str === "wantToRead")
@@ -55,7 +56,7 @@ class BookList extends PureComponent{
             let books = this.getTheBooks();
             return(
                 <div className="bookshelf">            
-                    <h2 className="bookshelf-title">{this.convertForAPI(bookshelf)}</h2> 
+                    <h2 className="bookshelf-title">{this.stringsForDisplay(bookshelf)}</h2> 
                     <div className="bookshelf-books">
                         { ( books !== null && books !== undefined ) &&
                         <ol className="books-grid">
