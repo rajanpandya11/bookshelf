@@ -22,14 +22,14 @@ class SearchPage extends Component{
     */
     handleSearch = (query) => {
         if(query !== undefined){
-            query = query.trim().toLowerCase();
-            if( query.length === 0  ||  
-                !this.state.keywords.slice().map(k => k.toLowerCase()).includes(query) )
+            query = query.toLowerCase();
+            if( query.trim().length === 0  ||  
+                !this.state.keywords.slice().map(k => k.toLowerCase()).includes(query.trim()) )
             {
-                this.setState({searchTerm: query});
+                this.setState({searchTerm: query, searchedBooks: []});
             }
             else{ 
-                BooksAPI.search(query).then((books) => {
+                BooksAPI.search(query.trim()).then((books) => {
                     if(books && books.length > 0) {
                         this.setState({ searchTerm: query, searchedBooks: books }); 
                     } 
