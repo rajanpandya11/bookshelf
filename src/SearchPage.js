@@ -23,16 +23,19 @@ class SearchPage extends Component{
     handleSearch = (query) => {
         if(query !== undefined){
             query = query.toLowerCase();
-            if( query.trim().length === 0  ||  
-                !this.state.keywords.slice().map(k => k.toLowerCase()).includes(query.trim()) )
+            if( query.trim().length === 0  
+            // ||  !this.state.keywords.slice().map(k => k.toLowerCase()).includes(query.trim()) 
+            )
             {
                 this.setState({searchTerm: query, searchedBooks: []});
             }
             else{ 
+                this.setState({ searchTerm: query } );
                 BooksAPI.search(query.trim()).then((books) => {
-                    if(books && books.length > 0) {
-                        this.setState({ searchTerm: query, searchedBooks: books }); 
-                    } 
+                    if(books.error) this.setState({ searchedBooks: [] }); 
+                    else{
+                        this.setState({ searchedBooks: books }); 
+                    }
                 });
             }
         }
